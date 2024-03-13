@@ -7,7 +7,7 @@ import javax.sql.DataSource
 
 
 @Configuration
-class DaoFactory{
+class DaoFactory {
 
     @Bean
     fun dataSource(): DataSource {
@@ -21,12 +21,7 @@ class DaoFactory{
     }
 
     @Bean
-    fun userNDao(): UserDao {
-        return UserDao(dataSource())
-    }
-
-    @Bean
-    fun userDDao(): UserDao {
+    fun userDao(): UserDao {
         return UserDao(dataSource())
     }
 }

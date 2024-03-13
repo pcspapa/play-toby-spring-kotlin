@@ -8,28 +8,30 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 class UserDaoTest {
 
     @Test
-    fun addAndGetNUser() { // Only test once
+    fun addAndGet() {
         val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userNDao", UserDao::class.java)
+        val dao = context.getBean("userDao", UserDao::class.java)
 
-        dao.add(User("mj", "Mary Jane Watson", "pw"))
+        dao.deleteAll()
+        assertThat(dao.getCount()).isEqualTo(0)
 
-        val user: User = dao.get("mj")
-        assertThat(user.id).isEqualTo("mj")
-        assertThat(user.name).isEqualTo("Mary Jane Watson")
-        assertThat(user.password).isEqualTo("pw")
-    }
+        val user1 = User("mj", "Mary Jane Watson", "pw")
+        val user2 = User("bp", "Brad Pitt", "pw")
 
-    @Test
-    fun addAndGetDUser() { // Only test once
-        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userDDao", UserDao::class.java)
+        dao.add(user1)
 
-        dao.add(User("bp", "Brad Pitt", "pw"))
+        val findUser1: User = dao.get("mj")
+        assertThat(dao.getCount()).isEqualTo(1)
+        assertThat(findUser1.id).isEqualTo("mj")
+        assertThat(findUser1.name).isEqualTo("Mary Jane Watson")
+        assertThat(findUser1.password).isEqualTo("pw")
 
-        val user = dao.get("bp")
-        assertThat(user.id).isEqualTo("bp")
-        assertThat(user.name).isEqualTo("Brad Pitt")
-        assertThat(user.password).isEqualTo("pw")
+        dao.add(user2)
+
+        val findUser2 = dao.get("bp")
+        assertThat(dao.getCount()).isEqualTo(2)
+        assertThat(findUser2.id).isEqualTo("bp")
+        assertThat(findUser2.name).isEqualTo("Brad Pitt")
+        assertThat(findUser2.password).isEqualTo("pw")
     }
 }
