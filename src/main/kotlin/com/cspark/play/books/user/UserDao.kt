@@ -37,17 +37,3 @@ class UserDao {
         return DriverManager.getConnection("jdbc:h2:tcp://localhost/~/toby-spring", "sa", "")
     }
 }
-
-fun main(args: Array<String>) {
-    val userDao = UserDao()
-
-    val user = User("papa", "cspark", "password")
-    userDao.add(user)
-
-    println("${user.id} - Creation successful!")
-
-    val findUser = userDao.get(user.id)
-    println(findUser.name)
-    println(findUser.password)
-    println("${user.id} - Selection successful!")
-}
