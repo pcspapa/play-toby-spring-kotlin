@@ -1,5 +1,6 @@
 package com.cspark.play.books.user
 
+import java.sql.ResultSet
 import javax.sql.DataSource
 
 class UserDao(
@@ -31,5 +32,29 @@ class UserDao(
             rs.getString("name"),
             rs.getString("password")
         )
+    }
+
+    fun deleteAll() {
+        val c = dataSource.connection
+        val ps = c.prepareStatement("delete from users")
+
+        ps.executeUpdate()
+
+        ps.close()
+        c.close()
+    }
+
+    fun getCount(): Int {
+        val c = dataSource.connection
+        val ps = c.prepareStatement("select count(*) from users")
+
+        val rs = ps.executeQuery()
+        rs.next()
+        val count = rs.getInt(1)
+
+        ps.close()
+        c.close()
+
+        return count
     }
 }
