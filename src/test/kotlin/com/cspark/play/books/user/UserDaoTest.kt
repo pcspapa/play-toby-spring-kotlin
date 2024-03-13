@@ -8,14 +8,28 @@ class UserDaoTest {
     @Test
     fun addAndGetNUser() { // Only test once
         val dao = UserDao(
-            SimpleConnectionMaker()
+            NConnectionMaker()
         )
 
         dao.add(User("mj", "Mary Jane Watson", "pw"))
 
-        val muserser: User = dao.get("mj")
-        assertThat(muserser.id).isEqualTo("mj")
-        assertThat(muserser.name).isEqualTo("Mary Jane Watson")
-        assertThat(muserser.password).isEqualTo("pw")
+        val user: User = dao.get("mj")
+        assertThat(user.id).isEqualTo("mj")
+        assertThat(user.name).isEqualTo("Mary Jane Watson")
+        assertThat(user.password).isEqualTo("pw")
+    }
+
+    @Test
+    fun addAndGetDUser() { // Only test once
+        val dao = UserDao(
+            DConnectionMaker()
+        )
+
+        dao.add(User("bp", "Brad Pitt", "pw"))
+
+        val user = dao.get("bp")
+        assertThat(user.id).isEqualTo("bp")
+        assertThat(user.name).isEqualTo("Brad Pitt")
+        assertThat(user.password).isEqualTo("pw")
     }
 }
