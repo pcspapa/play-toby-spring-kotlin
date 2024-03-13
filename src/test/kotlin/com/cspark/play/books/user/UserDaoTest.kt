@@ -4,17 +4,22 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-class UserDaoTest {
+@ExtendWith(SpringExtension::class)
+@ContextConfiguration(classes = [DaoFactory::class])
+class UserDaoTest(
+    private val context: ApplicationContext
+) {
 
-    private lateinit var dao : UserDao
+    private lateinit var dao: UserDao
 
     @BeforeEach
     fun setUp() {
-        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
         dao = context.getBean("userDao", UserDao::class.java)
     }
 
@@ -68,3 +73,4 @@ class UserDaoTest {
             .isInstanceOf(EmptyResultDataAccessException::class.java)
     }
 }
+
