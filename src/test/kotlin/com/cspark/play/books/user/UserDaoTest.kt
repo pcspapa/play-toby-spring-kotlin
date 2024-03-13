@@ -7,9 +7,7 @@ class UserDaoTest {
 
     @Test
     fun addAndGetNUser() { // Only test once
-        val dao = UserDao(
-            NConnectionMaker()
-        )
+        val dao = DaoFactory().userNDao()
 
         dao.add(User("mj", "Mary Jane Watson", "pw"))
 
@@ -21,9 +19,7 @@ class UserDaoTest {
 
     @Test
     fun addAndGetDUser() { // Only test once
-        val dao = UserDao(
-            DConnectionMaker()
-        )
+        val dao = DaoFactory().userDDao()
 
         dao.add(User("bp", "Brad Pitt", "pw"))
 
