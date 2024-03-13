@@ -1,12 +1,11 @@
 package com.cspark.play.books.user
 
-import java.sql.Connection
-import java.sql.DriverManager
-
-class UserDao {
+class UserDao(
+    private val simpleConnectionMaker: SimpleConnectionMaker,
+) {
 
     fun add(user: User) {
-        val c = getConnection()
+        val c = simpleConnectionMaker.makeNewConnection()
         val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
 
         ps.setString(1, user.id);
@@ -18,7 +17,7 @@ class UserDao {
     }
 
     fun get(id: String): User {
-        val c = getConnection()
+        val c = simpleConnectionMaker.makeNewConnection()
         val ps = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
@@ -30,10 +29,5 @@ class UserDao {
             rs.getString("name"),
             rs.getString("password")
         )
-    }
-
-    private fun getConnection(): Connection {
-        Class.forName("org.h2.Driver")
-        return DriverManager.getConnection("jdbc:h2:tcp://localhost/~/toby-spring", "sa", "")
     }
 }

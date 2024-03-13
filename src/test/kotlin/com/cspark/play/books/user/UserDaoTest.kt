@@ -7,7 +7,9 @@ class UserDaoTest {
 
     @Test
     fun addAndGetNUser() { // Only test once
-        val dao = UserDao()
+        val dao = UserDao(
+            SimpleConnectionMaker()
+        )
 
         dao.add(User("mj", "Mary Jane Watson", "pw"))
 
