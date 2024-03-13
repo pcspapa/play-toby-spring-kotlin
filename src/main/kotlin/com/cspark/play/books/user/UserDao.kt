@@ -1,6 +1,6 @@
 package com.cspark.play.books.user
 
-import java.sql.ResultSet
+import org.springframework.dao.EmptyResultDataAccessException
 import javax.sql.DataSource
 
 class UserDao(
@@ -25,13 +25,14 @@ class UserDao(
         ps.setString(1, id)
 
         val rs = ps.executeQuery()
-        rs.next()
 
-        return User(
-            rs.getString("id"),
-            rs.getString("name"),
-            rs.getString("password")
-        )
+        return if (rs.next()) {
+            User(
+                rs.getString("id"),
+                rs.getString("name"),
+                rs.getString("password")
+            )
+        } else throw EmptyResultDataAccessException(1)
     }
 
     fun deleteAll() {
