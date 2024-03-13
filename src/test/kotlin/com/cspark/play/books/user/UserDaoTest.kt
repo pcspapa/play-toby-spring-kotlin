@@ -2,6 +2,7 @@ package com.cspark.play.books.user
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -9,11 +10,16 @@ import org.springframework.dao.EmptyResultDataAccessException
 
 class UserDaoTest {
 
+    private lateinit var dao : UserDao
+
+    @BeforeEach
+    fun setUp() {
+        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
+        dao = context.getBean("userDao", UserDao::class.java)
+    }
+
     @Test
     fun addAndGet() {
-        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userDao", UserDao::class.java)
-
         dao.deleteAll()
         assertThat(dao.getCount()).isEqualTo(0)
 
@@ -39,9 +45,6 @@ class UserDaoTest {
 
     @Test
     fun count() {
-        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userDao", UserDao::class.java)
-
         dao.deleteAll()
         assertThat(dao.getCount()).isEqualTo(0)
 
@@ -61,9 +64,6 @@ class UserDaoTest {
 
     @Test
     fun getUserFailure() {
-        val context: ApplicationContext = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userDao", UserDao::class.java)
-
         assertThatThrownBy { dao.get("unknown") }
             .isInstanceOf(EmptyResultDataAccessException::class.java)
     }
