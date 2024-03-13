@@ -1,11 +1,13 @@
 package com.cspark.play.books.user
 
+import javax.sql.DataSource
+
 class UserDao(
-    private val connectionMaker: ConnectionMaker,
+    private val dataSource: DataSource,
 ) {
 
     fun add(user: User) {
-        val c = connectionMaker.makeNewConnection()
+        val c = dataSource.connection
         val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
 
         ps.setString(1, user.id);
@@ -17,7 +19,7 @@ class UserDao(
     }
 
     fun get(id: String): User {
-        val c = connectionMaker.makeNewConnection()
+        val c = dataSource.connection
         val ps = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
