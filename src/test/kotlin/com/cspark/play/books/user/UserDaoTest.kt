@@ -7,7 +7,7 @@ class UserDaoTest {
 
     @Test
     fun addAndGetNUser() { // Only test once
-        val dao = UserDao()
+        val dao = NUserDao()
 
         dao.add(User("mj", "Mary Jane Watson", "pw"))
 
@@ -15,5 +15,17 @@ class UserDaoTest {
         assertThat(muserser.id).isEqualTo("mj")
         assertThat(muserser.name).isEqualTo("Mary Jane Watson")
         assertThat(muserser.password).isEqualTo("pw")
+    }
+
+    @Test
+    fun addAndGetDUser() { // Only test once
+        val dao = DUserDao()
+
+        dao.add(User("bp", "Brad Pitt", "pw"))
+
+        val user = dao.get("bp")
+        assertThat(user.id).isEqualTo("bp")
+        assertThat(user.name).isEqualTo("Brad Pitt")
+        assertThat(user.password).isEqualTo("pw")
     }
 }
