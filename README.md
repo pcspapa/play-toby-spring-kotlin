@@ -52,3 +52,5 @@ from users;
 ## Move strategy implementation to local class
 
 ## Move strategy local class to anonymous inner class
+
+## Move context method to context class

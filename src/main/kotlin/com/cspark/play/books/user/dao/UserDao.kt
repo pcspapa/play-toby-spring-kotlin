@@ -5,15 +5,16 @@ import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.SQLException
 import javax.sql.DataSource
 
 class UserDao(
     private val dataSource: DataSource,
 ) {
 
+    private val jdbcContext = JdbcContext(dataSource)
+
     fun add(user: User) {
-        jdbcContextWithStatementStrategy(
+        jdbcContext.workWithStatementStrategy(
             object : StatementStrategy {
                 override fun makePreparedStatement(c: Connection): PreparedStatement {
                     val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
@@ -86,7 +87,7 @@ class UserDao(
     }
 
     fun deleteAll() {
-        jdbcContextWithStatementStrategy(
+        jdbcContext.workWithStatementStrategy(
             object : StatementStrategy {
                 override fun makePreparedStatement(c: Connection): PreparedStatement {
                     return c.prepareStatement("delete from users")
@@ -136,23 +137,6 @@ class UserDao(
                     }
                 }
             }
-        }
-    }
-
-    private fun jdbcContextWithStatementStrategy(statement: StatementStrategy) {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = statement.makePreparedStatement(c)
-
-            ps.executeUpdate()
-        } catch (e: Exception) {
-            throw e
-        } finally {
-            try { ps?.close() } catch (_: SQLException) { }
-            try { c?.close() } catch (_: SQLException) { }
         }
     }
 }
