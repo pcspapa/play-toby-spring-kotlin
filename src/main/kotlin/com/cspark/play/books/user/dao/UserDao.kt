@@ -13,23 +13,8 @@ class UserDao(
 ) {
 
     fun add(user: User) {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
-
-            ps.setString(1, user.id);
-            ps.setString(2, user.name);
-            ps.setString(3, user.password);
-            ps.executeUpdate();
-        } catch (e: Exception) {
-            throw e
-        } finally {
-            try { ps?.close() } catch (_: SQLException) { }
-            try { c?.close() } catch (_: SQLException) { }
-        }
+        val statement = AddStatement(user)
+        jdbcContextWithStatementStrategy(statement)
     }
 
     fun add2(user: User) {
@@ -90,20 +75,8 @@ class UserDao(
     }
 
     fun deleteAll() {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("delete from users")
-
-            ps.executeUpdate()
-        } catch (e: Exception) {
-            throw e
-        } finally {
-            try { ps?.close() } catch (_: SQLException) { }
-            try { c?.close() } catch (_: SQLException) { }
-        }
+        val statement = DeleteAllStatement()
+        jdbcContextWithStatementStrategy(statement)
     }
 
     fun deleteAll2() {
@@ -147,6 +120,23 @@ class UserDao(
                     }
                 }
             }
+        }
+    }
+
+    private fun jdbcContextWithStatementStrategy(statement: StatementStrategy) {
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
+
+        try {
+            c = dataSource.connection
+            ps = statement.makePreparedStatement(c)
+
+            ps.executeUpdate()
+        } catch (e: Exception) {
+            throw e
+        } finally {
+            try { ps?.close() } catch (_: SQLException) { }
+            try { c?.close() } catch (_: SQLException) { }
         }
     }
 }
