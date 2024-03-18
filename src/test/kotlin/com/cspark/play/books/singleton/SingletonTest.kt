@@ -1,7 +1,7 @@
 package com.cspark.play.books.singleton
 
-import com.cspark.play.books.user.DaoFactory
-import com.cspark.play.books.user.UserDao
+import com.cspark.play.books.user.dao.DaoFactory
+import com.cspark.play.books.user.dao.UserDao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.context.ApplicationContext

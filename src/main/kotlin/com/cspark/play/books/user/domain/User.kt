@@ -1,4 +1,4 @@
-package com.cspark.play.books.user
+package com.cspark.play.books.user.domain
 
 class User(val id: String, val name: String, val password: String) {
 

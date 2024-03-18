@@ -1,4 +1,4 @@
-package com.cspark.play.books.user
+package com.cspark.play.books.user.dao
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

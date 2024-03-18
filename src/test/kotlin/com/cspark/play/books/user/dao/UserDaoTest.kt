@@ -1,5 +1,6 @@
-package com.cspark.play.books.user
+package com.cspark.play.books.user.dao
 
+import com.cspark.play.books.user.domain.User
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
