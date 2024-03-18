@@ -40,3 +40,15 @@ from users;
 delete
 from users;
 ```
+
+# UserDao
+
+## Surround try/catch/finally
+
+## Strategy pattern
+
+- Context method, Strategy interface & class
+
+## Move strategy implementation to local class
+
+## Move strategy local class to anonymous inner class

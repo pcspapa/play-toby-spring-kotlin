@@ -13,23 +13,19 @@ class UserDao(
 ) {
 
     fun add(user: User) {
-        class AddStatement(
-            val user: User
-        ) : StatementStrategy {
+        jdbcContextWithStatementStrategy(
+            object : StatementStrategy {
+                override fun makePreparedStatement(c: Connection): PreparedStatement {
+                    val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
 
-            override fun makePreparedStatement(c: Connection): PreparedStatement {
-                val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+                    ps.setString(1, user.id);
+                    ps.setString(2, user.name);
+                    ps.setString(3, user.password);
 
-                ps.setString(1, user.id);
-                ps.setString(2, user.name);
-                ps.setString(3, user.password);
-
-                return ps
+                    return ps
+                }
             }
-        }
-
-        val statement = AddStatement(user)
-        jdbcContextWithStatementStrategy(statement)
+        )
     }
 
     fun add2(user: User) {
@@ -90,15 +86,13 @@ class UserDao(
     }
 
     fun deleteAll() {
-        class DeleteAllStatement : StatementStrategy {
-
-            override fun makePreparedStatement(c: Connection): PreparedStatement {
-                return c.prepareStatement("delete from users")
+        jdbcContextWithStatementStrategy(
+            object : StatementStrategy {
+                override fun makePreparedStatement(c: Connection): PreparedStatement {
+                    return c.prepareStatement("delete from users")
+                }
             }
-        }
-
-        val statement = DeleteAllStatement()
-        jdbcContextWithStatementStrategy(statement)
+        )
     }
 
     fun deleteAll2() {
