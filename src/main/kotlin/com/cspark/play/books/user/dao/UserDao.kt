@@ -2,69 +2,48 @@ package com.cspark.play.books.user.dao
 
 import com.cspark.play.books.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
-import java.sql.Connection
-import java.sql.PreparedStatement
+import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.ResultSet
 import javax.sql.DataSource
+
 
 class UserDao(
     private val dataSource: DataSource,
 ) {
 
+    private val jdbcTemplate = JdbcTemplate(dataSource)
     private val jdbcContext = JdbcContext(dataSource)
 
+    val userMapper: (rs: ResultSet, rowNum: Int) -> User = { rs, _ ->
+        User(
+            rs.getString("id"),
+            rs.getString("name"),
+            rs.getString("password")
+        )
+    }
+
     fun add(user: User) {
-        jdbcContext.workWithStatementStrategy(
-            object : StatementStrategy {
-                override fun makePreparedStatement(c: Connection): PreparedStatement {
-                    val ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
-
-                    ps.setString(1, user.id);
-                    ps.setString(2, user.name);
-                    ps.setString(3, user.password);
-
-                    return ps
-                }
-            }
+        jdbcTemplate.update(
+            "insert into users(id, name, password) values(?,?,?)",
+            user.id, user.name, user.password
         )
     }
 
     fun add2(user: User) {
         dataSource.connection.use { connection ->
-            connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)").use { preparedStatement ->
-                preparedStatement.setString(1, user.id)
-                preparedStatement.setString(2, user.name)
-                preparedStatement.setString(3, user.password)
-                preparedStatement.executeUpdate()
-            }
+            connection.prepareStatement("insert into users(id, name, password) values(?, ?, ?)")
+                .use { preparedStatement ->
+                    preparedStatement.setString(1, user.id)
+                    preparedStatement.setString(2, user.name)
+                    preparedStatement.setString(3, user.password)
+                    preparedStatement.executeUpdate()
+                }
         }
     }
 
     fun get(id: String): User {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-        var rs: ResultSet? = null
-
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("select * from users where id = ?")
-            ps.setString(1, id)
-            rs = ps.executeQuery()
-
-            return if (rs.next()) {
-                User(
-                    rs.getString("id"),
-                    rs.getString("name"),
-                    rs.getString("password")
-                )
-            } else throw EmptyResultDataAccessException(1)
-        } catch (e: Exception) {
-            throw e
-        } finally {
-            try { rs?.close() } catch (_: Exception) { }
-            try { ps?.close() } catch (_: Exception) { }
-            try { c?.close() } catch (_: Exception) { }
-        }
+        return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id)
+            ?: throw EmptyResultDataAccessException(1)
     }
 
     fun get2(id: String): User {
@@ -86,8 +65,12 @@ class UserDao(
         }
     }
 
+    fun getAll(): List<User> {
+        return jdbcTemplate.query("select * from users order by id", userMapper)
+    }
+
     fun deleteAll() {
-        jdbcContext.executeSql("delete from users")
+        jdbcTemplate.update("delete from users")
     }
 
     fun deleteAll2() {
@@ -99,25 +82,8 @@ class UserDao(
     }
 
     fun getCount(): Int {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-        var rs: ResultSet? = null
+        return jdbcTemplate.queryForObject("select count(*) from users", Int::class.java) ?: 0
 
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("select count(*) from users")
-
-            rs = ps.executeQuery()
-            rs.next()
-
-            return rs.getInt(1)
-        } catch (e: Exception) {
-            throw e
-        } finally {
-            try { rs?.close() } catch (_: Exception) { }
-            try { ps?.close() } catch (_: Exception) { }
-            try { c?.close() } catch (_: Exception) { }
-        }
     }
 
     fun getCount2(): Int {
