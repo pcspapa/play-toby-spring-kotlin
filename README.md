@@ -54,3 +54,8 @@ from users;
 ## Move strategy local class to anonymous inner class
 
 ## Move context method to context class
+
+## callback into template
+
+ - context : template
+ - strategy : callback

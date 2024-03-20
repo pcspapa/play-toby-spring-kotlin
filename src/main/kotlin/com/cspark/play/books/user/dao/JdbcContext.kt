@@ -10,7 +10,7 @@ class JdbcContext(
 ) {
 
     @Throws(SQLException::class)
-    fun workWithStatementStrategy(stmt: StatementStrategy) {
+    fun workWithStatementStrategy(stmt: StatementStrategy) { // template
         var c: Connection? = null
         var ps: PreparedStatement? = null
 
@@ -25,5 +25,16 @@ class JdbcContext(
             try { ps?.close() } catch (_: Exception) { }
             try { c?.close() } catch (_: Exception) { }
         }
+    }
+
+    @Throws(SQLException::class)
+    fun executeSql(sql: String) { // client
+        workWithStatementStrategy(
+            object : StatementStrategy { // callback
+                override fun makePreparedStatement(c: Connection): PreparedStatement {
+                    return c.prepareStatement(sql)
+                }
+            }
+        )
     }
 }
